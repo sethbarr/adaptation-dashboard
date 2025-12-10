@@ -4,7 +4,7 @@
 
 ### New Features
 
-#### Portfolio Interface for ARIA Managers
+#### Portfolio Interface for Program Managers
 - **Multi-project dashboard** with summary metrics (total, on track, behind, at risk)
 - **Sortable comparison table** with filtering by status, quality, and team
 - **Normalized progress visualization** showing all projects on same 0-100% scale
@@ -73,7 +73,7 @@
 ✅ Impact scoring
 ✅ Actionable warnings
 
-### For ARIA Managers (Portfolio Interface)
+### For Program Managers (Portfolio Interface)
 ✅ View all projects across teams
 ✅ Compare project performance
 ✅ Filter and sort by multiple criteria
