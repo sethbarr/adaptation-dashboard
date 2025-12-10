@@ -107,4 +107,4 @@ We've created 5 example projects to demonstrate the dashboard:
 For issues or questions:
 1. Check the main README.md for detailed documentation
 2. Review the SPECIFICATION.md for feature details
-3. Contact your ARIA program manager
+3. Contact your program manager or open a GitHub issue

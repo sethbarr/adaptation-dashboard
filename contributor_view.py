@@ -26,7 +26,7 @@ from plots import plot_trajectory, plot_progress_gauge, plot_impact_breakdown
 
 def render_contributor_interface():
     """Render the main contributor interface."""
-    st.title("🌱 ARIA Adaptation Tracker - Contributor Interface")
+    st.title("🌱 Adaptation Tracker - Contributor Interface")
 
     # Team selection/identification
     if 'team_name' not in st.session_state:

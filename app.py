@@ -1,5 +1,5 @@
 """
-ARIA Adaptation Dashboard - Main Application
+Adaptation Dashboard - Main Application
 Phase 2: Contributor + Portfolio Interfaces
 """
 
@@ -7,7 +7,7 @@ import streamlit as st
 
 # Page configuration
 st.set_page_config(
-    page_title="ARIA Adaptation Dashboard",
+    page_title="Adaptation Dashboard",
     page_icon="🌱",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -44,14 +44,13 @@ st.markdown("""
 
 # Sidebar
 with st.sidebar:
-    st.markdown("## 🌱 ARIA")
-    st.markdown("### Adaptation Tracker")
+    st.markdown("## 🌱 Adaptation Dashboard")
     st.markdown("---")
 
     # Interface selector
     interface_mode = st.radio(
         "Select Interface",
-        options=["👥 Contributor View", "📊 Portfolio View (ARIA Managers)"],
+        options=["👥 Contributor View", "📊 Portfolio View (Program Managers)"],
         index=0
     )
 
@@ -67,7 +66,7 @@ with st.sidebar:
         - Risk matrix analysis
         - Export data
 
-        **For:** ARIA program managers
+        **For:** Program managers
         """)
     else:
         st.markdown("""
@@ -149,7 +148,7 @@ with st.sidebar:
     st.markdown("""
     ### Support
 
-    For questions or issues, contact your ARIA program manager.
+    For questions or issues, contact your program manager.
     """)
 
     st.markdown("---")
@@ -166,6 +165,6 @@ else:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #7f8c8d; font-size: 0.9em;'>
-    ARIA Adaptation Dashboard | Built for tracking evolutionary adaptation progress
+    Adaptation Dashboard | Built for tracking evolutionary adaptation progress
 </div>
 """, unsafe_allow_html=True)

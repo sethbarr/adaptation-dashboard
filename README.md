@@ -1,10 +1,10 @@
-# ARIA Adaptation Dashboard
+# Adaptation Dashboard
 
 A web-based dashboard for tracking and comparing adaptation acceleration projects across multiple research teams.
 
 ## Overview
 
-This dashboard helps ARIA program managers and research teams monitor progress in accelerating species/system adaptation to future environmental conditions. It provides:
+This dashboard helps program managers and research teams monitor progress in accelerating species/system adaptation to future environmental conditions. It provides:
 
 - **Transparent projections** of adaptation trajectories
 - **Data quality assessment** to build confidence in estimates
@@ -26,7 +26,7 @@ This dashboard helps ARIA program managers and research teams monitor progress i
 - ✅ Impact score calculation based on ecological, economic, and urgency factors
 - ✅ Built-in FAQ and model selection guide
 
-#### Portfolio Interface (For ARIA Managers)
+#### Portfolio Interface (For Program Managers)
 
 - ✅ View all projects across teams in one dashboard
 - ✅ Portfolio summary metrics (total, on track, behind, at risk)
@@ -95,7 +95,7 @@ To backup your data, simply copy the `data/projects/` directory.
 adaptation_dash/
 ├── app.py                    # Main Streamlit app with routing
 ├── contributor_view.py       # Contributor interface (teams)
-├── portfolio_view.py         # Portfolio interface (ARIA managers)
+├── portfolio_view.py         # Portfolio interface (program managers)
 ├── models.py                 # Projection calculations (3 model types)
 ├── impact.py                 # Impact scoring system
 ├── data_quality.py           # Data quality assessment
@@ -156,7 +156,7 @@ Impact scores (0-10) are calculated from:
 1. **Start the app**: Run `./run_dashboard.sh` or `streamlit run app.py`
 2. **Select interface** in the sidebar:
    - **👥 Contributor View**: For research teams
-   - **📊 Portfolio View**: For ARIA managers
+   - **📊 Portfolio View**: For program managers
 3. **Explore example data**: 5 example projects are pre-loaded
 
 ### Contributor Workflow
@@ -198,15 +198,15 @@ Impact scores (0-10) are calculated from:
 
 ## Contributing
 
-This is an internal ARIA tool. For questions or feature requests, contact the development team.
+This is an open-source tool. For questions or feature requests, please open an issue on GitHub.
 
 ## License
 
-Copyright © 2024 ARIA. All rights reserved.
+MIT License - See LICENSE file for details
 
 ## Support
 
-For technical support or questions about using the dashboard, please contact your ARIA program manager.
+For technical support or questions about using the dashboard, please open an issue on GitHub or contact your program manager.
 
 ---
 

@@ -1,5 +1,5 @@
 """
-Portfolio interface for ARIA managers to view and compare all projects.
+Portfolio interface for program managers to view and compare all projects.
 """
 
 import streamlit as st
@@ -22,8 +22,8 @@ import plotly.graph_objects as go
 
 
 def render_portfolio_interface():
-    """Render the ARIA portfolio management interface."""
-    st.title("📊 ARIA Portfolio Dashboard")
+    """Render the portfolio management interface."""
+    st.title("📊 Portfolio Dashboard")
 
     # Load all projects
     projects = load_all_projects()
