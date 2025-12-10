@@ -1,4 +1,4 @@
-# ARIA Adaptation Dashboard - Revised Specification
+# Adaptation Dashboard - Revised Specification
 
 ## Overview
 
@@ -6,7 +6,7 @@ A two-tiered dashboard system for tracking and comparing adaptation acceleration
 
 **Two interfaces:**
 1. **Contributor Interface**: Individual teams view and update their own project(s)
-2. **ARIA Portfolio Interface**: Program managers view all projects, compare performance, make funding decisions
+2. **Portfolio Interface**: Program managers view all projects, compare performance, make funding decisions
 
 **Core principle**: Transparent, actionable, comparable metrics for adaptation progress.
 
@@ -97,7 +97,7 @@ Display as stars (★★★★★) or traffic light thresholds:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  ARIA Adaptation Tracker - [Team Name]                 │
+│  Adaptation Tracker - [Team Name]                 │
 ├─────────────────────────────────────────────────────────┤
 │  Your Projects: [Project Dropdown ▼] [+ New Project]   │
 ├─────────────────────────────────────────────────────────┤
@@ -162,13 +162,13 @@ Display as stars (★★★★★) or traffic light thresholds:
 
 ---
 
-## ARIA Portfolio Interface
+## Portfolio Interface
 
 ### Layout
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  ARIA Portfolio Dashboard                        [Filters ▼] │
+│  Portfolio Dashboard                        [Filters ▼] │
 ├──────────────────────────────────────────────────────────────┤
 │                                                               │
 │  PORTFOLIO SUMMARY                                           │
@@ -369,7 +369,7 @@ For simplicity:
 - CSV import/export
 - SQLite backend
 
-**Deliverable**: ARIA can view all projects
+**Deliverable**: can view all projects
 
 ### Phase 3: Advanced Features
 - Logistic model
@@ -395,7 +395,7 @@ For simplicity:
 5. Submit update
 6. Download report for their records
 
-### Workflow 2: ARIA Quarterly Review
+### Workflow 2: Quarterly Review
 
 1. Open portfolio interface
 2. Filter for projects with `target_date <= 2030`
@@ -415,7 +415,7 @@ For simplicity:
    - Initial `W0` measurement
 3. Dashboard flags if similar projects exist (avoid duplication)
 4. Project created with status "Pending first update"
-5. ARIA admin reviews and approves (optional gate)
+5. admin reviews and approves (optional gate)
 
 ---
 
@@ -465,8 +465,8 @@ adaptation_dash/
 ## Open Questions for Discussion
 
 1. **Authentication**: Should teams log in, or is file-based access control sufficient?
-2. **Impact weights**: Should ARIA be able to adjust the impact formula weights?
-3. **Targets**: Should ARIA set standardized targets, or do teams define their own?
+2. **Impact weights**: Should be able to adjust the impact formula weights?
+3. **Targets**: Should set standardized targets, or do teams define their own?
 4. **Update frequency**: How often should teams update data? Should there be reminders?
 5. **Confidence intervals**: 90% or 95% as default?
 6. **Model selection**: Should dashboard recommend which model to use based on data, or leave to users?
@@ -478,7 +478,7 @@ adaptation_dash/
 Dashboard is successful if:
 
 1. **Adoption**: ≥80% of funded teams use it quarterly
-2. **Decision support**: ARIA references it in ≥50% of funding review meetings
+2. **Decision support**: references it in ≥50% of funding review meetings
 3. **Transparency**: External reviewers rate data quality/auditability ≥4/5
 4. **Time savings**: Reduces reporting overhead by ≥30% vs manual Excel tracking
 
@@ -486,7 +486,7 @@ Dashboard is successful if:
 
 ## Next Steps
 
-1. Review & refine this spec with ARIA stakeholders
+1. Review & refine this spec with stakeholders
 2. Prioritize Phase 1 features
 3. Create mockups for both interfaces
 4. Build MVP contributor interface
