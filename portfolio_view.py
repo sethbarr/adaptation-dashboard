@@ -17,7 +17,7 @@ from models import (
 )
 from data_quality import compute_data_quality_score, get_quality_label, get_quality_stars
 from impact import compute_impact_score, get_impact_interpretation
-from plots import plot_multiple_trajectories, plot_risk_matrix
+from plots import plot_multiple_trajectories, plot_risk_matrix, _apply_font_sizes
 import plotly.graph_objects as go
 
 
@@ -374,7 +374,7 @@ def render_risk_matrix_view(df: pd.DataFrame):
     summary = []
     for _, row in df.iterrows():
         summary.append({
-            'name': f"{row['system_name'][:20]}",
+            'name': row['system_name'],
             'impact_score': row['impact_score'],
             'years_to_target': row['years_to_target'] if np.isfinite(row['years_to_target']) else 50,
             'status': row['status']
@@ -403,7 +403,7 @@ def render_distributions(df: pd.DataFrame):
             yaxis_title="Number of Projects",
             template='plotly_white'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(_apply_font_sizes(fig), use_container_width=True)
 
     with col2:
         # Quality score distribution
@@ -418,7 +418,7 @@ def render_distributions(df: pd.DataFrame):
             yaxis_title="Number of Projects",
             template='plotly_white'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(_apply_font_sizes(fig), use_container_width=True)
 
     # Rate distribution
     finite_rates = df[np.isfinite(df['rate_per_year'])]['rate_per_year']
@@ -434,4 +434,4 @@ def render_distributions(df: pd.DataFrame):
             yaxis_title="Number of Projects",
             template='plotly_white'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(_apply_font_sizes(fig), use_container_width=True)

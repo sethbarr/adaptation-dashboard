@@ -8,6 +8,34 @@ import numpy as np
 from typing import Dict, Optional
 
 
+def _get_chart_font_sizes() -> tuple:
+    """Get user-configured font sizes from Streamlit session state."""
+    try:
+        import streamlit as st
+        font_size = st.session_state.get('chart_font_size', 14)
+        title_size = st.session_state.get('chart_title_size', 18)
+    except Exception:
+        font_size, title_size = 14, 18
+    return font_size, title_size
+
+
+def _apply_font_sizes(fig: go.Figure) -> go.Figure:
+    """Apply user-configured font sizes to a Plotly figure."""
+    font_size, title_size = _get_chart_font_sizes()
+    fig.update_layout(
+        font=dict(size=font_size),
+        title_font_size=title_size,
+        xaxis=dict(tickfont=dict(size=font_size), title_font_size=font_size),
+        yaxis=dict(tickfont=dict(size=font_size), title_font_size=font_size),
+        legend=dict(font=dict(size=font_size)),
+    )
+    # Also scale up text on markers/annotations
+    for trace in fig.data:
+        if hasattr(trace, 'textfont') and trace.textfont is not None:
+            trace.textfont.size = font_size
+    return fig
+
+
 def plot_trajectory(
     projection: Dict,
     W_target: float,
@@ -147,7 +175,7 @@ def plot_trajectory(
         )
     )
 
-    return fig
+    return _apply_font_sizes(fig)
 
 
 def plot_progress_gauge(
@@ -203,7 +231,7 @@ def plot_progress_gauge(
         margin=dict(l=20, r=20, t=60, b=20)
     )
 
-    return fig
+    return _apply_font_sizes(fig)
 
 
 def plot_impact_breakdown(impact_result: Dict) -> go.Figure:
@@ -240,7 +268,7 @@ def plot_impact_breakdown(impact_result: Dict) -> go.Figure:
         showlegend=False
     )
 
-    return fig
+    return _apply_font_sizes(fig)
 
 
 def plot_multiple_trajectories(
@@ -304,7 +332,7 @@ def plot_multiple_trajectories(
         fig.add_hline(y=100, line_dash="dash", line_color="red",
                      annotation_text="Target", annotation_position="right")
 
-    return fig
+    return _apply_font_sizes(fig)
 
 
 def plot_risk_matrix(projects_summary: list) -> go.Figure:
@@ -321,6 +349,8 @@ def plot_risk_matrix(projects_summary: list) -> go.Figure:
     Returns:
         Plotly figure object
     """
+    font_size, title_size = _get_chart_font_sizes()
+
     names = [p['name'] for p in projects_summary]
     impact_scores = [p.get('impact_score', 0) for p in projects_summary]
     years_to_target = [p.get('years_to_target', np.inf) for p in projects_summary]
@@ -338,14 +368,13 @@ def plot_risk_matrix(projects_summary: list) -> go.Figure:
     }
     colors = [color_map.get(s, 'gray') for s in statuses]
 
+    # Plot points only (labels handled via annotations to avoid overlap)
     fig = go.Figure(go.Scatter(
         x=years_to_target,
         y=impact_scores,
-        mode='markers+text',
+        mode='markers',
         marker=dict(size=15, color=colors, line=dict(width=2, color='white')),
         text=names,
-        textposition='top center',
-        textfont=dict(size=10),
         hovertemplate='<b>%{text}</b><br>Impact: %{y:.1f}<br>Years to target: %{x:.1f}<extra></extra>'
     ))
 
@@ -358,18 +387,79 @@ def plot_risk_matrix(projects_summary: list) -> go.Figure:
 
     # Add quadrant labels
     max_years = max(years_to_target) if years_to_target else 20
+    min_years = min(years_to_target) if years_to_target else 0
     max_impact = max(impact_scores) if impact_scores else 10
+    min_impact = min(impact_scores) if impact_scores else 0
 
+    quadrant_font_size = max(font_size - 2, 8)
     annotations = [
-        dict(x=max_years * 0.25, y=max_impact * 0.75, text="High Priority<br>(High Impact, Soon)",
-             showarrow=False, font=dict(size=10, color='darkgreen')),
-        dict(x=max_years * 0.75, y=max_impact * 0.75, text="Strategic<br>(High Impact, Far)",
-             showarrow=False, font=dict(size=10, color='darkblue')),
-        dict(x=max_years * 0.25, y=max_impact * 0.25, text="Quick Wins<br>(Low Impact, Soon)",
-             showarrow=False, font=dict(size=10, color='orange')),
-        dict(x=max_years * 0.75, y=max_impact * 0.25, text="Deprioritize?<br>(Low Impact, Far)",
-             showarrow=False, font=dict(size=10, color='gray'))
+        dict(x=median_years * 0.4, y=max_impact * 0.95,
+             text="High Priority<br>(High Impact, Soon)",
+             showarrow=False, font=dict(size=quadrant_font_size, color='darkgreen'), opacity=0.5),
+        dict(x=max_years * 0.85, y=max_impact * 0.95,
+             text="Strategic<br>(High Impact, Far)",
+             showarrow=False, font=dict(size=quadrant_font_size, color='darkblue'), opacity=0.5),
+        dict(x=median_years * 0.4, y=min_impact + (median_impact - min_impact) * 0.1,
+             text="Quick Wins<br>(Low Impact, Soon)",
+             showarrow=False, font=dict(size=quadrant_font_size, color='orange'), opacity=0.5),
+        dict(x=max_years * 0.85, y=min_impact + (median_impact - min_impact) * 0.1,
+             text="Deprioritize?<br>(Low Impact, Far)",
+             showarrow=False, font=dict(size=quadrant_font_size, color='gray'), opacity=0.5)
     ]
+
+    # Spread out point labels to avoid overlap, using arrows for displaced labels
+    x_range = max_years - min_years if max_years > min_years else 1
+    y_range = max_impact - min_impact if max_impact > min_impact else 1
+    # Threshold: points closer than this fraction of the range are "overlapping"
+    x_thresh = x_range * 0.08
+    y_thresh = y_range * 0.08
+
+    # Assign label positions, nudging overlapping ones
+    label_positions = []
+    for i in range(len(names)):
+        ax, ay = 0, -25  # default: label above point, no arrow needed
+        needs_arrow = False
+        for j in range(i):
+            dx = abs(years_to_target[i] - years_to_target[j])
+            dy = abs(impact_scores[i] - impact_scores[j])
+            if dx < x_thresh and dy < y_thresh:
+                needs_arrow = True
+                break
+            # Also check against already-placed label positions
+            prev_lx = years_to_target[j] + label_positions[j][0] * x_range / 200
+            prev_ly = impact_scores[j] + label_positions[j][1] * y_range / 200
+            curr_lx = years_to_target[i]
+            curr_ly = impact_scores[i]
+            if abs(curr_lx - prev_lx) < x_thresh and abs(curr_ly - prev_ly) < y_thresh:
+                needs_arrow = True
+                break
+
+        if needs_arrow:
+            # Alternate displacement directions for clustered points
+            cluster_count = sum(
+                1 for j in range(i)
+                if abs(years_to_target[i] - years_to_target[j]) < x_thresh
+                and abs(impact_scores[i] - impact_scores[j]) < y_thresh
+            )
+            directions = [(40, -40), (-60, -50), (50, 40), (-40, 50)]
+            ax, ay = directions[cluster_count % len(directions)]
+
+        label_positions.append((ax, ay))
+
+        annotations.append(dict(
+            x=years_to_target[i],
+            y=impact_scores[i],
+            text=names[i],
+            showarrow=needs_arrow,
+            arrowhead=2 if needs_arrow else 0,
+            arrowwidth=1.5,
+            arrowcolor='#555',
+            ax=ax,
+            ay=ay,
+            font=dict(size=font_size),
+            bgcolor='rgba(255,255,255,0.7)' if needs_arrow else None,
+            borderpad=2
+        ))
 
     fig.update_layout(
         title="Portfolio Risk Matrix: Impact vs Timeline",
@@ -381,4 +471,4 @@ def plot_risk_matrix(projects_summary: list) -> go.Figure:
         annotations=annotations
     )
 
-    return fig
+    return _apply_font_sizes(fig)

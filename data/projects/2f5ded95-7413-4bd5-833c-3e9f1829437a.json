@@ -1,7 +1,7 @@
 {
   "project_id": "2f5ded95-7413-4bd5-833c-3e9f1829437a",
   "team_name": "CSIRO Forestry",
-  "system_name": "Eucalyptus (E. grandis)",
+  "system_name": "Eucalyptus", 
   "phenotype": "Fire resistance (bark thickness)",
   "stress_scenario": "Increased wildfire frequency & intensity",
   "program_year": 2020,

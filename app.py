@@ -152,6 +152,20 @@ with st.sidebar:
     """)
 
     st.markdown("---")
+
+    with st.expander("⚙️ Chart Settings"):
+        chart_font_size = st.slider(
+            "Font size (axes, labels, legends)",
+            min_value=8, max_value=24, value=14, step=1
+        )
+        chart_title_size = st.slider(
+            "Title font size",
+            min_value=10, max_value=32, value=18, step=1
+        )
+        st.session_state['chart_font_size'] = chart_font_size
+        st.session_state['chart_title_size'] = chart_title_size
+
+    st.markdown("---")
     st.markdown("**Version:** 2.0.0 (Phase 2)")
     st.markdown("**Last Updated:** December 2024")
 

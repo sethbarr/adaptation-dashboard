@@ -1,7 +1,7 @@
 {
   "project_id": "ef49a7f7-1bc5-4115-9971-d4ef336e8619",
   "team_name": "Oxford Marine Lab",
-  "system_name": "Coral (Acropora millepora)",
+  "system_name": "Coral", 
   "phenotype": "Heat tolerance (LT50)",
   "stress_scenario": "RCP 8.5, 2050 ocean temps (+2\u00b0C)",
   "program_year": 2022,
