@@ -50,7 +50,7 @@ with st.sidebar:
     # Interface selector
     interface_mode = st.radio(
         "Select Interface",
-        options=["👥 Contributor View", "📊 Portfolio View (Program Managers)"],
+        options=["📊 Portfolio View (Program Managers)", "👥 Contributor View"],
         index=0
     )
 
