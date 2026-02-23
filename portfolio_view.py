@@ -288,13 +288,13 @@ def render_portfolio_analytics(df: pd.DataFrame, projects: list):
     """Render portfolio analytics visualizations."""
     st.markdown("## Portfolio Analytics")
 
-    tab1, tab2, tab3 = st.tabs(["📈 Normalized Progress", "🎯 Risk Matrix", "📊 Distribution"])
+    tab1, tab2, tab3 = st.tabs(["🎯 Risk Matrix", "📈 Normalized Progress", "📊 Distribution"])
 
     with tab1:
-        render_normalized_progress(df, projects)
+        render_risk_matrix_view(df)
 
     with tab2:
-        render_risk_matrix_view(df)
+        render_normalized_progress(df, projects)
 
     with tab3:
         render_distributions(df)
