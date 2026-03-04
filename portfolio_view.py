@@ -155,6 +155,7 @@ def compute_project_metrics(project: Project) -> dict:
         'progress_pct': progress_pct,
         'rate_per_gen': projection['rate_per_gen'],
         'rate_per_year': projection['rate_per_year'],
+        'adaptive_ratio': project.W_current / project.W0 if project.W0 != 0 else np.nan,
         'program_year': project.program_year,
         'environment': project.environment,
         'model_type': project.model_type
@@ -225,7 +226,7 @@ def render_project_table(df: pd.DataFrame, projects: list):
     with col1:
         sort_by = st.selectbox(
             "Sort by",
-            options=['Impact Score', 'Years to Target', 'Progress %', 'Quality Score', 'Team Name'],
+            options=['Impact Score', 'Years to Target', 'Adaptive Ratio', 'Progress %', 'Quality Score', 'Team Name'],
             index=0
         )
     with col2:
@@ -243,6 +244,7 @@ def render_project_table(df: pd.DataFrame, projects: list):
     sort_map = {
         'Impact Score': 'impact_score',
         'Years to Target': 'years_to_target',
+        'Adaptive Ratio': 'adaptive_ratio',
         'Progress %': 'progress_pct',
         'Quality Score': 'quality_score',
         'Team Name': 'team_name'
@@ -250,13 +252,13 @@ def render_project_table(df: pd.DataFrame, projects: list):
 
     sorted_df = filtered_df.sort_values(
         by=sort_map[sort_by],
-        ascending=(sort_by not in ['Impact Score', 'Progress %', 'Quality Score'])
+        ascending=(sort_by not in ['Impact Score', 'Adaptive Ratio', 'Progress %', 'Quality Score'])
     )
 
     # Create display table
     display_df = sorted_df[[
         'team_name', 'system_name', 'phenotype', 'status',
-        'quality_stars', 'impact_score', 'years_to_target'
+        'quality_stars', 'impact_score', 'adaptive_ratio', 'years_to_target'
     ]].copy()
 
     # Format columns
@@ -264,9 +266,12 @@ def render_project_table(df: pd.DataFrame, projects: list):
         lambda x: f"{x:.1f}" if np.isfinite(x) else "∞"
     )
     display_df['impact_score'] = display_df['impact_score'].apply(lambda x: f"{x:.1f}")
+    display_df['adaptive_ratio'] = display_df['adaptive_ratio'].apply(
+        lambda x: f"{x:.2f}×" if np.isfinite(x) else "—"
+    )
 
     # Rename for display
-    display_df.columns = ['Team', 'System', 'Phenotype', 'Status', 'Quality', 'Impact', 'Years to Target']
+    display_df.columns = ['Team', 'System', 'Phenotype', 'Status', 'Quality', 'Impact', 'Adaptive Ratio', 'Years to Target']
 
     # Color code status
     def color_status(val):
