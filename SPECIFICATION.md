@@ -223,18 +223,99 @@ Display as stars (★★★★★) or traffic light thresholds:
 
 #### 2. **Impact Score Calculation**
 
-Composite score (0-10):
+Composite score (0–10), combining five user-assessed components with one model-derived component:
 
 ```
-Impact = 0.25 × ecological_value
-       + 0.25 × economic_value
-       + 0.20 × urgency
-       + 0.15 × (1 / years_to_target)  # sooner = higher
-       + 0.10 × scalability
-       + 0.05 × technical_feasibility
+Impact = 0.25 × Ecological
+       + 0.25 × Economic
+       + 0.20 × Urgency × TimePressure
+       + 0.15 × Timeline
+       + 0.10 × Scalability
+       + 0.05 × Feasibility
 ```
+
+**Model-derived component — Timeline (0–10):**
+
+Timeline reflects how quickly the project is expected to reach its target, based on the observed rate of improvement from baseline to current performance and the remaining gap to target:
+
+```
+Timeline = 10 × e^(−years_to_target / 5)
+```
+
+This gives ~8.2 for 1 year away, ~3.7 for 5 years, ~1.4 for 10 years, and effectively 0 for 20+ years. If the target is unreachable (rate ≤ 0 or infinite time), Timeline = 0.
+
+**Time pressure multiplier (applied to Urgency component only):**
+
+If a target date is provided, the Urgency component is scaled up when the deadline is near:
+
+| Years remaining to target date | Multiplier |
+|-------------------------------|------------|
+| Already past deadline         | × 1.5      |
+| ≤ 5 years                    | × 1.3      |
+| ≤ 10 years                   | × 1.1      |
+| > 10 years                   | × 1.0      |
+
+The final score is clipped to [0, 10].
 
 Displayed with breakdown on hover/click.
+
+---
+
+#### 2a. **Scoring Guide for User-Assessed Components**
+
+These five scores (0–10) are entered by the contributing research team and reviewed by program managers. They represent expert judgement and should be assigned consistently across projects using the rubrics below.
+
+**Who fills these in:** The contributing team provides initial scores when submitting their project. Program managers may adjust scores during portfolio reviews to ensure cross-project consistency.
+
+**Ecological Importance (0–10)**
+How critical is this species/system to biodiversity and ecosystem function?
+
+| Score | Meaning | Examples |
+|-------|---------|---------|
+| 0–2   | Low: limited ecological role, not threatened | Common ornamental species |
+| 3–5   | Moderate: regionally important, some ecosystem dependency | Commercially farmed fish with wild relatives |
+| 6–8   | High: keystone species, significant ecosystem services | Reef-building corals, native pollinators |
+| 9–10  | Critical: irreplaceable ecosystem function, widespread dependency | Foundation species (e.g., dominant reef coral, primary pollinator for major crop system) |
+
+**Economic Importance (0–10)**
+What is the economic value at stake if this system fails to adapt?
+
+| Score | Meaning | Examples |
+|-------|---------|---------|
+| 0–2   | Low: minimal direct economic impact | Non-commercial endemic species |
+| 3–5   | Moderate: regional economic significance | Minor crop variety, local fishery |
+| 6–8   | High: major industry or food security relevance | Staple crop (wheat, rice), major timber species |
+| 9–10  | Critical: global food security or multi-billion dollar industry | Top-5 global calorie crops, species underpinning reef tourism + fisheries |
+
+**Urgency (0–10)**
+How soon must adaptation occur to avoid irreversible harm?
+
+| Score | Meaning | Examples |
+|-------|---------|---------|
+| 0–2   | Low: stress is decades away or slowly emerging | Species in stable climate refugia |
+| 3–5   | Moderate: stress expected within 20–30 years | Gradual temperature increase in temperate zone |
+| 6–8   | High: stress expected within 5–15 years | Coral bleaching thresholds being crossed regularly |
+| 9–10  | Critical: stress is already causing population decline | Species already experiencing mass mortality events |
+
+**Scalability (0–10)**
+Can the adapted population or intervention be deployed at meaningful scale?
+
+| Score | Meaning | Examples |
+|-------|---------|---------|
+| 0–2   | Very limited: confined to lab, no clear deployment path | Single captive population, no release protocol |
+| 3–5   | Moderate: deployment possible but logistically challenging | Assisted gene flow in remote marine environments |
+| 6–8   | High: established deployment pathways exist | Crop breeding pipelines, hatchery-based restocking |
+| 9–10  | Very high: direct integration into existing production systems | Seed distribution networks, commercial breeding programs |
+
+**Technical Feasibility (0–10)**
+How tractable is the adaptation intervention given current knowledge and tools?
+
+| Score | Meaning | Examples |
+|-------|---------|---------|
+| 0–2   | Very difficult: poorly understood genetics, long generation time, low heritability | Long-lived tree species with unknown trait genetics |
+| 3–5   | Moderate: some genetic basis known, but practical barriers remain | Species with moderate heritability but limited breeding infrastructure |
+| 6–8   | High: well-characterized trait, proven selection methods | Crop species with known QTLs and existing breeding programs |
+| 9–10  | Very high: rapid generation time, high heritability, genomic tools available | Microbial systems, well-studied model organisms with gene editing |
 
 #### 3. **Traffic Light Status Logic**
 
