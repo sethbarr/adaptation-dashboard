@@ -17,7 +17,7 @@
   "environment": "Lab",
   "selection_method": "Artificial",
   "target_type": "Fold increase",
-  "target_value": 8.0,
+  "target_value": 9.0,
   "target_date": 2040,
   "minimum_viable_performance": null,
   "dW_se": 1.3,
