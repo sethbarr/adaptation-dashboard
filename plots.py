@@ -407,44 +407,45 @@ def plot_risk_matrix(projects_summary: list) -> go.Figure:
              showarrow=False, font=dict(size=quadrant_font_size, color='gray'), opacity=0.5)
     ]
 
-    # Spread out point labels to avoid overlap, using arrows for displaced labels
+    # Place all labels directly above their dot; use arrows when labels overlap
+    # Each label gets a slot above its point; if two slots collide, displace with arrow
+    label_y_offset = -25  # pixels above the dot (negative = up in Plotly annotation coords)
+    label_slots = []  # track (x_data, y_data, ax_px, ay_px) for placed labels
+
     x_range = max_years - min_years if max_years > min_years else 1
     y_range = max_impact - min_impact if max_impact > min_impact else 1
-    # Threshold: points closer than this fraction of the range are "overlapping"
-    x_thresh = x_range * 0.08
-    y_thresh = y_range * 0.08
+    # Thresholds in data coords for detecting label overlap
+    x_thresh = x_range * 0.10
+    y_thresh = y_range * 0.10
 
-    # Assign label positions, nudging overlapping ones
-    label_positions = []
     for i in range(len(names)):
-        ax, ay = 0, -25  # default: label above point, no arrow needed
+        # Default: label centered directly above the dot
+        ax, ay = 0, label_y_offset
         needs_arrow = False
-        for j in range(i):
-            dx = abs(years_to_target[i] - years_to_target[j])
-            dy = abs(impact_scores[i] - impact_scores[j])
-            if dx < x_thresh and dy < y_thresh:
-                needs_arrow = True
-                break
-            # Also check against already-placed label positions
-            prev_lx = years_to_target[j] + label_positions[j][0] * x_range / 200
-            prev_ly = impact_scores[j] + label_positions[j][1] * y_range / 200
-            curr_lx = years_to_target[i]
-            curr_ly = impact_scores[i]
-            if abs(curr_lx - prev_lx) < x_thresh and abs(curr_ly - prev_ly) < y_thresh:
+
+        # Check if this default position overlaps with any already-placed label
+        for slot in label_slots:
+            prev_x, prev_y, prev_ax, prev_ay = slot
+            # Compare label positions (approximate: same data point + similar pixel offset)
+            dx = abs(years_to_target[i] - prev_x)
+            dy = abs(impact_scores[i] - prev_y)
+            same_pixel_region = abs(ax - prev_ax) < 30 and abs(ay - prev_ay) < 20
+            if dx < x_thresh and dy < y_thresh and same_pixel_region:
                 needs_arrow = True
                 break
 
         if needs_arrow:
-            # Alternate displacement directions for clustered points
+            # Count how many prior labels are in this cluster to pick a displacement direction
             cluster_count = sum(
-                1 for j in range(i)
-                if abs(years_to_target[i] - years_to_target[j]) < x_thresh
-                and abs(impact_scores[i] - impact_scores[j]) < y_thresh
+                1 for slot in label_slots
+                if abs(years_to_target[i] - slot[0]) < x_thresh
+                and abs(impact_scores[i] - slot[1]) < y_thresh
             )
-            directions = [(40, -40), (-60, -50), (50, 40), (-40, 50)]
+            # Displace upward in staggered directions, always above
+            directions = [(0, -55), (50, -50), (-50, -50), (0, -85)]
             ax, ay = directions[cluster_count % len(directions)]
 
-        label_positions.append((ax, ay))
+        label_slots.append((years_to_target[i], impact_scores[i], ax, ay))
 
         annotations.append(dict(
             x=years_to_target[i],
@@ -456,8 +457,9 @@ def plot_risk_matrix(projects_summary: list) -> go.Figure:
             arrowcolor='#555',
             ax=ax,
             ay=ay,
+            yanchor='bottom',
             font=dict(size=font_size),
-            bgcolor='rgba(255,255,255,0.7)' if needs_arrow else None,
+            bgcolor='rgba(255,255,255,0.8)' if needs_arrow else 'rgba(255,255,255,0.6)',
             borderpad=2
         ))
 
